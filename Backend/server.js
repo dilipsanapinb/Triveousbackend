@@ -12,7 +12,9 @@ app.get('/', (req, res) => {
 });
 
 // routes
-app.use('/user',userRoute)
+app.use('/api/user', userRoute);
+
+
 app.listen(port, async () => {
     try {
         await connection;
