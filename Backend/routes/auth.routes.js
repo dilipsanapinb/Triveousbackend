@@ -9,4 +9,7 @@ userRoute.get('/allusers',userController.getAllUsers)
 // register the user
 userRoute.post('/register', userController.registerUser);
 
+// login the user
+userRoute.post('/login',userController.loginUser)
+
 module.exports = userRoute;
