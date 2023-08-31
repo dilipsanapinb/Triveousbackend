@@ -10,6 +10,9 @@ userRoute.get('/allusers',userController.getAllUsers)
 userRoute.post('/register', userController.registerUser);
 
 // login the user
-userRoute.post('/login',userController.loginUser)
+userRoute.post('/login', userController.loginUser);
+
+// generate token using the refresh token
+userRoute.get('/refreshtoken',userController.refreshToken)
 
 module.exports = userRoute;
