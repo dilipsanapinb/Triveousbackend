@@ -23,6 +23,10 @@ const productSchema = new mongoose.Schema({
     },
     ratings: [{
         star: Number,
+        ratedBy: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref:'user'
+        },
     }],
     availability: {
         type: Boolean,

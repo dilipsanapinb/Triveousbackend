@@ -1,22 +1,27 @@
-const express = require('express');
-const productController=require('../controllers/product.controller')
+const express = require("express");
+const productController = require("../controllers/product.controller");
 const protected = require("../middlewares/authentication");
 const authorize = require("../middlewares/authorise");
 const productRoute = express.Router();
 
 // get all products
-productRoute.get('/allproducts', productController.getAllProducts);
+productRoute.get("/allproducts", productController.getAllProducts);
 
 // get a product by id
-productRoute.get('/:id', productController.getProductById);
+productRoute.get("/:id", productController.getProductById);
 
 // create product
-productRoute.post("/create", protected, authorize(['admin', 'retailer']), productController.createPoduct);
+productRoute.post(
+  "/create",
+  protected,
+  authorize(["admin", "retailer"]),
+  productController.createPoduct
+);
 
 // edit the product details
+productRoute.patch("/edit/:id", productController.editProduct);
 
 // delete the product
-
+productRoute.delete("/delete/:id", productController.deleteProduct);
 
 module.exports = productRoute;
-

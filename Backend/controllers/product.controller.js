@@ -55,5 +55,45 @@ exports.createPoduct = async (req, res) => {
 };
 
 // edit the product
+exports.editProduct = async (req, res) => {
+    try {
+        const id= req.params.id;
+        const payload = req.body;
+        const product = await Product.findById(id);
+        if (!product) {
+            res.status(404).json({ message: "Product not found" });
+        }
+        await Product.findByIdAndUpdate({ _id:id }, payload);
+        const updatedProduct = await Product.findById(id);
+
+        res.status(200).json({ message: "Product updated successfully", updatedProduct });
+
+    } catch (error) {
+        console.log(error.message);
+        res
+            .status(500)
+            .json({ message: "Something went wrong at edit the product details" });
+    }
+};
 
 // delete the product
+
+exports.deleteProduct = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const product = await Product.findById(id);
+        if (!product) {
+            res.status(404).json({ message: "Product not found" });
+        }
+        await Product.findByIdAndDelete(id);
+
+        res.status(200).json({ message: "Product deleted successfully" })
+    } catch (error) {
+        console.log(error.message);
+        res
+            .status(500)
+            .json({
+                message: "Something went wrong at delete the product",
+            });
+    }
+};
