@@ -14,8 +14,8 @@ exports.getAllProducts = async(req,res) => {
 // get a product by id
 exports.getProductById = async (req, res) => {
     try {
-        const { productId } = req.params.id;
-        const product = await Product.findById(productId);
+        const id = req.params.id;
+        const product = await Product.findById(id);
         if (!product) {
             return res.status(404).json({ message: "Product not found" })
         }
@@ -55,5 +55,49 @@ exports.createPoduct = async (req, res) => {
 };
 
 // edit the product
+exports.editProduct = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const payload = req.body;
+        const product = await Product.findById(id);
+        if (!product) {
+            return res.status(404).json({ message: "Product not found" });
+        }
+        
+        const updatedProduct = await Product.findByIdAndUpdate(
+            id,
+            payload,
+            { new: true }
+        );
+
+        res.status(200).json({ message: "Product updated successfully", updatedProduct });
+
+    } catch (error) {
+        console.log(error.message);
+        res
+            .status(500)
+            .json({ message: "Something went wrong at edit the product details" });
+    }
+};
 
 // delete the product
+
+exports.deleteProduct = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const product = await Product.findById(id);
+        if (!product) {
+            res.status(404).json({ message: "Product not found" });
+        }
+        await Product.findByIdAndDelete(id);
+
+        res.status(200).json({ message: "Product deleted successfully" })
+    } catch (error) {
+        console.log(error.message);
+        res
+            .status(500)
+            .json({
+                message: "Something went wrong at delete the product",
+            });
+    }
+};
