@@ -14,6 +14,9 @@ orderRoute.get('/order-history',protected,orderController.getOrderHistory)
 // fetch order by id
 orderRoute.get('/:orderId', protected, orderController.getOrderDetails);
 
+// cahnge the order status
+orderRoute.patch('/change-status/:orderId', protected, authorize(['admin', 'retailer']), orderController.updateOrderStatus);
+
 
 
 
