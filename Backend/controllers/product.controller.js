@@ -14,8 +14,8 @@ exports.getAllProducts = async(req,res) => {
 // get a product by id
 exports.getProductById = async (req, res) => {
     try {
-        const { productId } = req.params.id;
-        const product = await Product.findById(productId);
+        const id = req.params.id;
+        const product = await Product.findById(id);
         if (!product) {
             return res.status(404).json({ message: "Product not found" })
         }
@@ -57,14 +57,18 @@ exports.createPoduct = async (req, res) => {
 // edit the product
 exports.editProduct = async (req, res) => {
     try {
-        const id= req.params.id;
+        const id = req.params.id;
         const payload = req.body;
         const product = await Product.findById(id);
         if (!product) {
-            res.status(404).json({ message: "Product not found" });
+            return res.status(404).json({ message: "Product not found" });
         }
-        await Product.findByIdAndUpdate({ _id:id }, payload);
-        const updatedProduct = await Product.findById(id);
+        
+        const updatedProduct = await Product.findByIdAndUpdate(
+            id,
+            payload,
+            { new: true }
+        );
 
         res.status(200).json({ message: "Product updated successfully", updatedProduct });
 
