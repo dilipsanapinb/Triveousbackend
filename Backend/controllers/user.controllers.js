@@ -105,7 +105,7 @@ exports.loginUser = async (req, res) => {
     }
 };
 
-exports.refreshToken = async () => {
+exports.refreshToken = async (req,res) => {
     try {
         const refreshToken = req.body.refreshToken;
 
