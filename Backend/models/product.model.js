@@ -23,7 +23,6 @@ const productSchema = new mongoose.Schema({
     },
     ratings: [{
         star: Number,
-        default:0
     }],
     availability: {
         type: Boolean,
@@ -33,7 +32,6 @@ const productSchema = new mongoose.Schema({
         type: String,
       required: true,
     },
-
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
