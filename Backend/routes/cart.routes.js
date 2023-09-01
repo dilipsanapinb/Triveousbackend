@@ -12,6 +12,12 @@ cartRoute.get('/:id/all', protected, cartController.getAllItemsFromCart);
 cartRoute.post('/add', protected, cartController.addToCart);
 
 // delete the cart by id
-cartRoute.delete('/delete/:id',protected,cartController.deleteItemfromCart)
+cartRoute.delete('/delete/:productId',protected,cartController.deleteItemfromCart)
 
+// increase the quantity
+cartRoute.patch(
+    "/increase/:productId",
+    protected,
+    cartController.increaseProductQuantity
+);
 module.exports = cartRoute;

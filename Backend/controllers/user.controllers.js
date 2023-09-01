@@ -85,7 +85,7 @@ exports.loginUser = async (req, res) => {
                 const accessToken = jwt.sign(
                     { userId: isUserExists._id ,role:isUserExists.role},
                     process.env.secret,
-                    { expiresIn: '1h' }
+                    { expiresIn: '1d' }
                 );
 
                 const refreshToken = jwt.sign(
