@@ -4,7 +4,8 @@ const connection = require('./config/db');
 const userRoute = require('./routes/auth.routes');
 const categoryRoute = require('./routes/category.routes');
 const productRoute = require('./routes/product.routes');
-const cartRoute=require('./routes/cart.routes')
+const cartRoute = require('./routes/cart.routes');
+const placeOrder=require('./routes/order.routes')
 const port=process.env.PORT || 5000
 const app = express();
 
@@ -18,7 +19,9 @@ app.get('/', (req, res) => {
 app.use('/api/user', userRoute);
 app.use('/api/category', categoryRoute);
 app.use('/api/product', productRoute);
-app.use('/api/cart',cartRoute);
+app.use('/api/cart', cartRoute);
+app.use('/api/order', placeOrder);
+
 
 app.listen(port, async () => {
     try {
