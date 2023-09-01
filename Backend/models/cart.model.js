@@ -11,15 +11,18 @@ const cartItemSchema = new mongoose.Schema({
         required: true,
         default: 1
     },
+    cartTotal:Number,
 });
 
 const userCartItemsSchema = new mongoose.Schema({
-    user: {
+    orderBy: {
         type: mongoose.Schema.Types.ObjectId,
         ref: mongoose.Schema.ObjectId,
         required: true,
     },
     items: [cartItemSchema],
+}, {
+    timestamps:true
 });
 
 UserCart = mongoose.model('UserCart', userCartItemsSchema);
