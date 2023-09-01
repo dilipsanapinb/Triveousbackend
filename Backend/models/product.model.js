@@ -13,15 +13,34 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    image: {
+        type: String,
+        required:true,
+    },
+    color: {
+        type: String,
+        required:true,
+    },
+    ratings: [{
+        star: Number,
+        default:0
+    }],
     availability: {
         type: Boolean,
         default: true,
     },
+    brand: {
+        type: String,
+      required: true,
+    },
+
     category: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Category',
         required: true,
     }
+}, {
+    timestamps:true
 });
 
 const Product = mongoose.model('Product', productSchema);

@@ -78,19 +78,20 @@ exports.loginUser = async (req, res) => {
                 .status(429)
                 .json({ message: "User with this email not exist" });
         }
-        const hashPassword = isUserExists.password;
+      const hashPassword = isUserExists.password;
+      // console.log(isUserExists.role);
         bcrypt.compare(password, hashPassword, async (bcryptError, result) => {
             if (result) {
                 const accessToken = jwt.sign(
-                    { userId: isUserExists._id },
+                    { userId: isUserExists._id ,role:isUserExists.role},
                     process.env.secret,
                     { expiresIn: '1h' }
                 );
 
                 const refreshToken = jwt.sign(
-                    { userId: isUserExists._id },
-                    process.env.refreshSecret,
-                    { expiresIn: "7d" }
+                  { userId: isUserExists._id, role: isUserExists.role },
+                  process.env.refreshSecret,
+                  { expiresIn: "7d" }
                 );
 
                 res.status(200).json({ message: "Login Successfull", accessToken, refreshToken })

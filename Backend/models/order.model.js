@@ -20,7 +20,7 @@ const orderSchema = new mongoose.Schema({
   items: [orderItemSchema],
   status: {
     type: String,
-    enum: ["Pending", "Order placed", "Preparing", "Dispached", "Delivered"],
+    enum: ["Pending", "Order placed", "Preparing", "Dispached","Canceled", "Delivered"],
     default: "Pending",
     },
     orderDate: {
