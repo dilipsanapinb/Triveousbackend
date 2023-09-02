@@ -4,11 +4,11 @@ info:
   description: Ecommerce API.
   version: 1.1.2
 servers:
-  - url: https://ecommercebackend-4diz.onrender.com/api-docs/
+  - url: http://localhost:8000/
     description: Local server
-  - url: https://ecommercebackend-4diz.onrender.com/api-docs/
+  - url: http://localhost:8000/
     description: Pre production server
-  - url: https://ecommercebackend-4diz.onrender.com/api-docs/
+  - url: http://localhost:8000/
     description: Production server
 
 
