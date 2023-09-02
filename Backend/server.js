@@ -6,11 +6,20 @@ const categoryRoute = require("./routes/category.routes");
 const productRoute = require("./routes/product.routes");
 const cartRoute = require("./routes/cart.routes");
 const placeOrder = require("./routes/order.routes");
-const {swaggerServe,swaggerSetup}=require('./config/swaggerOptions')
+const { swaggerServe, swaggerSetup } = require('./config/swaggerOptions');
+const rate=require('./middlewares/ratelimiter')
 const port = process.env.PORT || 5000;
 const app = express();
 
+const limiter = rate({
+  limit: 100,
+  time: 60000,
+  blockedTime:30000,
+})
+
 app.use(express.json());
+
+app.use(limiter);
 
 app.get("/", (req, res) => {
   res.status(200).json({ message: "Welcome to the triveous app" });
