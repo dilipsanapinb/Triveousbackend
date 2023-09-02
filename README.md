@@ -5,6 +5,7 @@
 
 the documentation can be accessed throught the followin url.
 
+https://ecommercebackend-4diz.onrender.com/api-docs/
 
 <!--  -->
 ## Documentation image
