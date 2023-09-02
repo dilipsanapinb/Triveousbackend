@@ -574,13 +574,12 @@ paths:
         '500':
           description: Internal server error. Something went wrong while deleting the category.
   
-
-  # get all products list
+  # get all products
   /api/product/allproducts:
     get:
       summary: Get all products
       description: Retrieve a list of all products.
-      tags:  # Note: Change 'tag' to 'tags'
+      tags:
         - Products
       responses:
         '200':
@@ -596,58 +595,7 @@ paths:
                   products:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        _id:
-                          type: string
-                          description: The unique identifier of the product.
-                        title:
-                          type: string
-                          description: The title of the product.
-                        description:
-                          type: string
-                          description: A description of the product.
-                        price:
-                          type: number
-                          description: The price of the product.
-                        image:
-                          type: string
-                          description: URL to the product image.
-                        color:
-                          type: string
-                          description: The color of the product.
-                        ratings:
-                          type: array
-                          description: Array of rating objects.
-                          items:
-                            type: object
-                            properties:
-                              star:
-                                type: integer
-                                description: The star rating given by users.
-                              ratedBy:
-                                type: string
-                                description: The unique identifier of the user who rated the product.
-                        availability:
-                          type: boolean
-                          description: Indicates if the product is available.
-                        brand:
-                          type: string
-                          description: The brand of the product.
-                        category:
-                          type: string
-                          description: The category to which the product belongs.
-                        createdAt:
-                          type: string
-                          format: date-time
-                          description: The timestamp when the product was created.
-                        updatedAt:
-                          type: string
-                          format: date-time
-                          description: The timestamp when the product was last updated.
-                        __v:
-                          type: integer
-                          description: Version number (MongoDB-specific).
+                      $ref: '#/components/schemas/Product'
               example:
                 message: All Products Data
                 products:
@@ -696,3 +644,742 @@ paths:
                     createdAt: "2023-09-01T15:00:52.705Z"
                     updatedAt: "2023-09-01T15:00:52.705Z"
                     __v: 0
+  
+  # get product by id
+  /api/product/{id}:
+    get:
+      summary: Get a product by ID
+      description: Retrieve product details by its unique identifier.
+      tags:
+        - Products
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique identifier of the product to retrieve.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Product details retrieved successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          example:
+            message: Product found
+            product:
+              $ref: '#/components/examples/ProductExample'
+        '404':
+          description: Product not found.
+        '500':
+          description: Internal server error. Something went wrong while fetching the product.
+  
+  # create the product
+  /api/product/create:
+    post:
+      summary: Create a product
+      description: Create a new product with the provided details.
+      tags:
+        - Products
+      security:
+        - BearerAuth: []
+        - RoleAuth: ['admin', 'retailer']
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductCreateRequest'
+      responses:
+        '201':
+          description: Product created successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          example:
+            message: Product created successfully
+            product:
+              $ref: '#/components/examples/ProductExample'
+        '500':
+          description: Internal server error. Something went wrong while creating the product
+
+  # edit the product
+  /api/product/edit/{id}:
+    patch:
+      summary: Edit product details
+      description: Update the details of an existing product.
+      tags:
+        - Products
+      security:
+        - BearerAuth: []
+        - RoleAuth: ['admin', 'retailer']
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique identifier of the product to edit.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductEditRequest'
+      responses:
+        '200':
+          description: Product updated successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+          example:
+            message: Product updated successfully
+            updatedProduct:
+              $ref: '#/components/examples/ProductExample'
+        '404':
+          description: Product not found.
+        '500':
+          description: Internal server error. Something went wrong while editing the product.
+
+  # delete the product bu id
+  /api/product/delete/{id}:
+    delete:
+      summary: Delete a product
+      description: Delete a product by its unique identifier.
+      tags:
+        - Products
+      security:
+        - BearerAuth: []
+        - RoleAuth: ['admin', 'retailer']
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The unique identifier of the product to delete.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Product deleted successfully.
+        '404':
+          description: Product not found.
+        '500':
+          description: Internal server error. Something went wrong while deleting the product.
+  
+  # get all cart items
+  /api/cart/{id}/all:
+    get:
+      summary: Get all items from a user's cart
+      description: Retrieve all items from a user's cart based on their userId.
+      tags:
+        - Cart
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The unique identifier of the user.
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: A success message.
+                  items:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        product:
+                          type: string
+                          description: The unique identifier of the product in the cart.
+                        count:
+                          type: integer
+                          description: The quantity of this product in the cart.
+                        _id:
+                          type: string
+                          description: The unique identifier of the cart item.
+        '404':
+          description: Cart not found.
+        '500':
+          description: Internal server error. Something went wrong while fetching the cart.
+
+  # add to the cart
+  /api/cart/add:
+    post:
+      summary: Add a product to the user's cart
+      description: Add a product to the user's cart with the provided details.
+      tags:
+        - Cart
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddToCartRequest'
+      responses:
+        '200':
+          description: Product added to cart successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCart'
+          example:
+            message: Product added to cart
+            cart:
+              $ref: '#/components/examples/UserCartExample'
+        '500':
+          description: Internal server error. Something went wrong while adding to the cart.
+  
+  # delete the item from cart
+  /api/cart/delete/{productId}:
+    delete:
+      summary: Delete a product from the user's cart
+      description: Delete a product from the user's cart by its unique identifier.
+      tags:
+        - Cart
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: string
+          description: The unique identifier of the product to delete from the cart.
+      responses:
+        '200':
+          description: Product deleted from cart successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCart'
+          example:
+            message: Item deleted from cart
+            cart:
+              $ref: '#/components/examples/UserCartExample'
+        '404':
+          description: Product not found in the cart.
+        '500':
+          description: Internal server error. Something went wrong while deleting the cart.
+
+  # increase the quantity
+  /api/cart/increase/{productId}:
+    patch:
+      summary: Increase the quantity of a product in the user's cart
+      description: Increase the quantity of a product in the user's cart by its unique identifier.
+      tags:
+        - Cart
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          schema:
+            type: string
+          description: The unique identifier of the product to increase the quantity.
+      responses:
+        '200':
+          description: Product quantity increased in the cart successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserCart'
+          example:
+            message: Product quantity increased in the cart
+            cart:
+              $ref: '#/components/examples/UserCartExample'
+        '404':
+          description: Product not found in the cart.
+        '500':
+          description: Internal server error. Something went wrong while increasing the quantity.
+  
+  # place order
+  /api/order/place-order:
+    post:
+      summary: Place an order
+      description: Place an order using the items from the user's cart.
+      tags:
+        - Orders
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PlaceOrderRequest'
+      responses:
+        '201':
+          description: Order placed successfully.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+          example:
+            message: Order placed successfully
+            order:
+              $ref: '#/components/examples/OrderExample'
+        '400':
+          description: Cart is empty.
+        '500':
+          description: Internal server error. Something went wrong while placing the order.
+
+  # order history
+  /api/order/order-history:
+    get:
+      summary: Get order history
+      description: Retrieve the order history of a user.
+      tags:
+        - Orders
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderHistoryResponse'
+          example:
+            message: Order history
+            orders:
+              - $ref: '#/components/examples/OrderExample'
+        '500':
+          description: Internal server error. Something went wrong while fetching order history.
+  
+  # get order by id
+  /api/order/{orderId}:
+    get:
+      summary: Get order details by ID
+      description: Retrieve the details of an order by its unique identifier.
+      tags:
+        - Orders
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: The unique identifier of the order to fetch.
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+          example:
+            message: Order details fetch successfully
+            order:
+              $ref: '#/components/examples/OrderExample'
+        '404':
+          description: Order not found.
+        '500':
+          description: Internal server error. Something went wrong while fetching order details by ID.
+
+  
+  # Change the status by id
+  /api/order/change-status/{orderId}:
+    patch:
+      summary: Change order status
+      description: Update the status of an order by its unique identifier.
+      tags:
+        - Orders
+      security:
+        - BearerAuth: []
+        - RoleAuth: ['admin', 'retailer']
+      parameters:
+        - name: orderId
+          in: path
+          required: true
+          description: The unique identifier of the order to update.
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  type: string
+                  description: The updated status of the order.
+              required:
+                - status
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+          example:
+            message: Status updated successfully
+            order:
+              $ref: '#/components/examples/OrderExample'
+        '404':
+          description: Order not found.
+        '500':
+          description: Internal server error. Something went wrong while updating the order status.
+components:
+  schemas:
+    OrderHistoryResponse:
+      type: object
+      properties:
+        message:
+          type: string
+          description: A success message.
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/Order'
+          description: The list of orders in the order history.
+    PlaceOrderRequest:
+      type: object
+      properties:
+        userId:
+          type: string
+          description: The unique identifier of the user placing the order.
+      required:
+        - userId
+    Order:
+      type: object
+      properties:
+        user:
+          type: string
+          description: The unique identifier of the user who placed the order.
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItem'
+          description: The list of items in the order.
+        status:
+          type: string
+          description: The status of the order.
+        orderTotal:
+          type: integer
+          description: The total cost of the order.
+        _id:
+          type: string
+          description: The unique identifier of the order.
+        orderDate:
+          type: string
+          format: date-time
+          description: The timestamp when the order was placed.
+        __v:
+          type: integer
+          description: Version number (MongoDB-specific).
+    CartItem:
+      type: object
+      properties:
+        product:
+          type: string
+          description: The unique identifier of the product in the cart.
+        count:
+          type: integer
+          description: The quantity of this product in the cart.
+        _id:
+          type: string
+          description: The unique identifier of the cart item.
+    
+    AddToCartRequest:
+      type: object
+      properties:
+        productId:
+          type: string
+          description: The unique identifier of the product to add to the cart.
+        count:
+          type: integer
+          description: The quantity of the product to add to the cart.
+      required:
+        - productId
+        - count
+
+    UserCart:
+      type: object
+      properties:
+        _id:
+          type: string
+          description: The unique identifier of the cart.
+        products:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartItem'
+          description: The list of products in the cart.
+        orderBy:
+          type: string
+          description: The unique identifier of the user who owns the cart.
+        cartTotal:
+          type: integer
+          description: The total cost of the items in the cart.
+        createdAt:
+          type: string
+          format: date-time
+          description: The timestamp when the cart was created.
+        updatedAt:
+          type: string
+          format: date-time
+          description: The timestamp when the cart was last updated.
+        __v:
+          type: integer
+          description: Version number (MongoDB-specific).
+  
+  
+  parameters:
+    UserId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: The unique identifier of the user.
+
+    ProductCreateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The title of the product.
+        description:
+          type: string
+          description: A description of the product.
+        price:
+          type: number
+          description: The price of the product.
+        image:
+          type: string
+          description: URL to the product image.
+        color:
+          type: string
+          description: The color of the product.
+        ratings:
+          type: array
+          description: Array of rating objects.
+          items:
+            type: object
+            properties:
+              star:
+                type: integer
+                description: The star rating given by users.
+              ratedBy:
+                type: string
+                description: The unique identifier of the user who rated the product.
+        availability:
+          type: boolean
+          description: Indicates if the product is available.
+        brand:
+          type: string
+          description: The brand of the product.
+        category:
+          type: string
+          description: The category to which the product belongs.
+      required:
+        - title
+        - description
+        - price
+        - image
+        - color
+        - ratings
+        - availability
+        - brand
+        - category
+
+    ProductEditRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The updated title of the product.
+        description:
+          type: string
+          description: The updated description of the product.
+        price:
+          type: number
+          description: The updated price of the product.
+        image:
+          type: string
+          description: URL to the updated product image.
+        color:
+          type: string
+          description: The updated color of the product.
+        ratings:
+          type: array
+          description: Updated array of rating objects.
+          items:
+            type: object
+            properties:
+              star:
+                type: integer
+                description: The updated star rating given by users.
+              ratedBy:
+                type: string
+                description: The unique identifier of the user who rated the product.
+        availability:
+          type: boolean
+          description: Indicates if the product is available.
+        brand:
+          type: string
+          description: The updated brand of the product.
+        category:
+          type: string
+          description: The updated category to which the product belongs.
+
+  examples:
+
+    ProductExample:
+      title: "trimmer 800"
+      description: "Stainless steel trimmer"
+      price: 1500
+      image: "abc.example.jpg"
+      color: "black"
+      ratings:
+        - star: 9
+          ratedBy: "64f1ac02d35a74ccc2bb6037"
+      availability: true
+      brand: "Philips"
+      category: "64f193c606e6a568a98f8138"
+      _id: "64f1fca46b80a1f12a7a1138"
+      createdAt: "2023-09-01T15:00:52.705Z"
+      updatedAt: "2023-09-01T15:00:52.705Z"
+      __v: 0
+    
+    UserCartExample:
+      _id: "64f1c329fbd718e694cd2a7f"
+      products:
+        - product: "64f1fca46b80a1f12a7a1138"
+          count: 2
+          _id: "64f1fcee6b80a1f12a7a113e"
+      orderBy: "64f18d870421d3e37e3c142d"
+      cartTotal: 3000
+      createdAt: "2023-09-01T10:55:38.088Z"
+      updatedAt: "2023-09-01T15:02:06.753Z"
+      __v: 3
+
+    # order example
+    OrderExample:
+      user: "64f18d870421d3e37e3c142d"
+      items:
+        - product: "64f1c27d2437fb2631459523"
+          count: 2
+          _id: "64f1e90e7ad2c8639a9c6ffa"
+      status: "Order placed"
+      orderTotal: 3000
+      _id: "64f1e9d46208106810d332b4"
+      orderDate: "2023-09-01T13:40:36.457Z"
+      __v: 0
+    
+    # product example
+    Product:
+      type: object
+      properties:
+        title:
+          type: string
+          description: The title of the product.
+        description:
+          type: string
+          description: A description of the product.
+        price:
+          type: number
+          description: The price of the product.
+        image:
+          type: string
+          description: URL to the product image.
+        color:
+          type: string
+          description: The color of the product.
+        ratings:
+          type: array
+          description: Array of rating objects.
+          items:
+            type: object
+            properties:
+              star:
+                type: integer
+                description: The star rating given by users.
+              ratedBy:
+                type: string
+                description: The unique identifier of the user who rated the product.
+        availability:
+          type: boolean
+          description: Indicates if the product is available.
+        brand:
+          type: string
+          description: The brand of the product.
+        category:
+          type: string
+          description: The category to which the product belongs.
+        _id:
+          type: string
+          description: The unique identifier of the product.
+        createdAt:
+          type: string
+          format: date-time
+          description: The timestamp when the product was created.
+        updatedAt:
+          type: string
+          format: date-time
+          description: The timestamp when the product was last updated.
+        __v:
+          type: integer
+          description: Version number (MongoDB-specific).
+    
+
+    # order hisrory
+    OrderExample:
+      _id: "64f1e9d46208106810d332b4"
+      user: "64f18d870421d3e37e3c142d"
+      items:
+        - product: "64f1c27d2437fb2631459523"
+          count: 2
+          _id: "64f1e90e7ad2c8639a9c6ffa"
+      status: "Order placed"
+      orderTotal: 3000
+      orderDate: "2023-09-01T13:40:36.457Z"
+      __v: 0
+    
+    # order example
+    OrderExample:
+      _id: "64f1e9d46208106810d332b4"
+      user: "64f18d870421d3e37e3c142d"
+      items:
+        - product: "64f1c27d2437fb2631459523"
+          count: 2
+          _id: "64f1e90e7ad2c8639a9c6ffa"
+      status: "Order placed"
+      orderTotal: 3000
+      orderDate: "2023-09-01T13:40:36.457Z"
+    
+
+    # OrderExample:
+      _id: "64f1e9d46208106810d332b4"
+      user: "64f18d870421d3e37e3c142d"
+      items:
+        - product: "64f1c27d2437fb2631459523"
+          count: 2
+          _id: "64f1e90e7ad2c8639a9c6ffa"
+      status: "Dispatched"
+      orderTotal: 3000
+      orderDate: "2023-09-01T13:40:36.457Z"
+      __v: 0
+  
+
+
+

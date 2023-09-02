@@ -19,9 +19,19 @@ productRoute.post(
 );
 
 // edit the product details
-productRoute.patch("/edit/:id", productController.editProduct);
+productRoute.patch(
+  "/edit/:id",
+  protected,
+  authorize(["admin", "retailer"]),
+  productController.editProduct
+);
 
 // delete the product
-productRoute.delete("/delete/:id", productController.deleteProduct);
+productRoute.delete(
+  "/delete/:id",
+  protected,
+  authorize(["admin", "retailer"]),
+  productController.deleteProduct
+);
 
 module.exports = productRoute;
