@@ -1,6 +1,8 @@
 # Triveousbackend
 - Triveous is the ecoomerce site for the shoppind with different categories of the products.
 
+# Deployed link
+https://ecommercebackend-4diz.onrender.com/
 # Documentation on swagger
 
 the documentation can be accessed throught the followin url.
