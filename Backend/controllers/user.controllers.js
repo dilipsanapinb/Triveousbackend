@@ -37,7 +37,7 @@ exports.registerUser = async (req, res) => {
         .status(400)
         .json({
           message:
-            "Password must contail at least one capital letter,one symbol, and one number, and be at leasr * character long",
+            "Password must contail at least one capital letter,one symbol, and one number, and be at least 8 character long",
         });
     }
     bcrypt.hash(password, 10, async (err, hash) => {
@@ -105,6 +105,8 @@ exports.loginUser = async (req, res) => {
         res.status(500).json({ message: "Something went wrong at login the user" });
     }
 };
+
+// refresh token
 
 exports.refreshToken = async (req,res) => {
     try {
